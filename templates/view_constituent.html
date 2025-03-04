@@ -1,0 +1,51 @@
+{{ define "title" }}View Constituent{{ end }}
+
+{{ define "content" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {{ range .Constituents }}
+            <h1>{{ .First_name }} {{ .Last_name }}</h1>
+            <p>{{ .Address1 }}, {{ .City }}, {{ .Postcode }}</p>
+            <p>Phone: {{ .Phone }} Email: {{ .Email }}</p>
+            {{ end }}
+            <h3>Cases</h3>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p><b>Id</b></p>
+        </div>
+        <div class="col">
+            <p><b>Category</b></p>
+        </div>
+        <div class="col">
+            <p><b>Summary</b></p>
+        </div>
+        <div class="col"></div>
+    </div>
+    {{ range .Cases }}
+    <div class="row">
+        <div class="col">
+            <p>{{ .Id }}</p>
+        </div>
+        <div class="col">
+            <p>{{ .Category }}</p>
+        </div>
+        <div class="col">
+            <p>{{ .Summary }}</p>
+        </div>
+        <div class="col">
+            <form action="/case">
+                <input hidden value="{{ .Id }}" name="id" id="id">
+                <button class="btn btn-primary" type="submit">Open case</button>
+            </form>
+        </div>
+    </div>
+    {{ end }}
+</div>
+
+{{ end }}
+
+{{ define "script" }} {{ end }}

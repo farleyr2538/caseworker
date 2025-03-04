@@ -1,0 +1,18 @@
+input {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.emailRow {
+    opacity: 0;
+}
+
+.emailRow.show {
+    opacity: 1;
+    transform: translateY(-290px);
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+svg {
+    cursor: pointer;
+}

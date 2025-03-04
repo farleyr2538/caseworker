@@ -1,0 +1,34 @@
+{{define "title"}}View Constituents{{end}}
+
+{{ define "content" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Constituents</h1>
+        </div>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-auto">
+            {{ range .}}
+            <form action="/view-constituent">
+                <input hidden value={{.Id}} name="id">
+                <button class="btn text-decoration-underline text-primary" type="submit">{{.First_name}} {{.Last_name}}</button>
+            </form>
+            {{ end }}
+        </div>
+        <div class="col-auto">
+            {{ range .}}
+            <form action="/delete-constituent">
+                <input hidden value="{{.Id}}" name="id">
+                <button class="btn btn-danger" type="submit">delete</button>
+            </form>
+            {{ end }}
+        </div>
+    </div>
+</div>
+    
+
+{{ end }}
+
+{{ define "script" }} {{end}}

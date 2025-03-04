@@ -1,0 +1,41 @@
+{{ define "title" }}View cases{{ end }}
+
+{{ define "content" }}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p>Id</p>
+            </div>
+            <div class="col">
+                <p>Summary</p>
+            </div>
+            <div class="col">
+                <p>Category</p>
+            </div>
+            <div class="col"><p> </p></div>
+        </div>
+        {{ range .Cases }}
+        <div class="row">
+            <div class="col">
+                <p>{{ .Id }}</p>
+            </div>
+            <div class="col">
+                <p>{{ .Summary }}</p>
+            </div>
+            <div class="col">
+                <p>{{ .Category }}</p>
+            </div>
+            <div class="col">
+                <form action="/case">
+                    <input hidden name="id" id="id" value="{{ .Id }}">
+                    <button class="btn btn-primary" type="submit">Open case</button>
+                </form>
+            </div>
+        </div>
+        {{ end }}
+    </div>
+
+{{ end }}
+
+{{ define "script" }}{{ end }}

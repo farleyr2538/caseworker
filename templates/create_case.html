@@ -1,0 +1,29 @@
+{{ define "title" }}Create constituent{{ end }}
+
+{{ define "content" }}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <h1>Create case</h1>
+            <form action="/submit-case">
+                <input hidden name="constituent_id" value="{{ . }}">
+                <label class="form-label" for="category">Category</label>
+                <select class="form-select" aria-label="default-select-example" name="category" id="category">
+                    <option selected>Select category</option>
+                    <option value="crime">Crime</option>
+                    <option value="housing">Housing</option>
+                    <option value="immigration">Asylum, visas, and immigration</option>
+                    <option value="politics">Politics</option>
+                </select>
+                <label class="form-label" for="summary">Summary</label>
+                <input class="form-control" id="summary" name="summary">
+                <button class="btn btn-primary" type="submit">Create case</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{ end }}
+
+{{ define "script" }} {{ end }}

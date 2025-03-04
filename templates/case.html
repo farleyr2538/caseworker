@@ -1,0 +1,59 @@
+<!--use case: one constituent and one case to be inserted into template-->
+{{ define "title" }}View case{{ end }}
+
+{{ define "content" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {{ range .Constituents }}
+            <h1>{{ .First_name }} {{ .Last_name }}</h1>
+            <p>{{ .Address1 }}, {{ .Address2 }}, {{ .City }}</p>
+            {{ end }}
+        </div>
+    </div>
+    <div class="row my-4 bg-light">
+        <div class="col">
+            <h5>Case Summary</h5>
+            {{ range .Cases }}
+            <p>{{ .Summary }}</p>
+            {{ end }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" id="newEmailButton">new email</button>
+            <p>(emails...)</p>
+            <!-- eventually, insert case emails here from newest to oldest -->
+        </div>
+    </div>
+    <div class="row emailRow bg-light justify-content-between" id="newEmailRow">
+        <div class="col-8">
+            <h3>New email</h3>
+        </div>
+        <div class="col-1">
+            <span id="closeNewEmail">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+            </span>
+        </div>
+        <div class="col-12">
+            <form id="newEmailForm">
+                {{ range .Cases}}
+                <input hidden id="case_id" name="case_id" value="{{ .Id }}">
+                {{ end }}
+                <input class="form-control" name="to" placeholder="to">
+                <input class="form-control" name="cc" placeholder="cc">
+                <input class="form-control" name="subject" placeholder="subject">
+                <textarea class="form-control" name="message" placeholder="message" rows="6"></textarea>
+                <button class="btn btn-primary my-2" type="submit">send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{ end }}
+
+{{ define "script" }}<script type="module" src="../dist/case_logic.js"></script>{{ end }}

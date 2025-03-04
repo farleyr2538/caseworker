@@ -1,0 +1,42 @@
+{{ define "title"}}Create Constituent{{end}}
+
+{{ define "content" }}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Create constituent</h1>
+            <form action="/submit-constituent" autocomplete="on">
+                <label for="first_name" class="form-label">First Name</label>
+                <input class="form-control" id="first_name" name="first_name">
+
+                <label for="last_name" class="form-label">Last Name</label>
+                <input class="form-control" id="last_name" name="last_name">
+
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email">
+                
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone">
+                
+                <label for="address1" class="form-label">Address Line 1</label>
+                <input class="form-control" id="address1" name="address1">
+                
+                <label for="address2" class="form-label">Address Line 2</label>
+                <input class="form-control" id="address2" name="address2">
+                
+                <label for="city" class="form-label">City</label>
+                <input class="form-control" id="city" name="city">
+                
+                <label for="postcode" class="form-label">Postcode</label>
+                <input class="form-control" id="postcode" name="postcode">
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{ end }}
+
+{{ define "script" }} {{ end }}
