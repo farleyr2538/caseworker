@@ -1,7 +1,9 @@
+import { v4 as uuid, UUIDTypes } from 'uuid'
+
 export interface email {
-    Id? : number;
-    Case_id : number;
-    Datetime : Date;
+    Id? : UUIDTypes;
+    Case_id : UUIDTypes;
+    Datetime : string;
     From? : string;
     To : string;
     Cc? : string;
@@ -11,7 +13,7 @@ export interface email {
 }
 
 export interface constituent {
-    id : number;
+    id : UUIDTypes;
     first_name : string;
     last_name : string;
     email : string;
@@ -26,11 +28,12 @@ export interface constituent {
 export interface case_ {
     id : number;
     constituent_id : number;
-    reference : string | undefined;
     category : string;
     summary : string;
+    status : string;
 }
 
+/*
 export const data = {
     emails : [
         {
@@ -80,3 +83,4 @@ export const data = {
         }
     ]
 }
+*/

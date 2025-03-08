@@ -1,4 +1,5 @@
-import { constituent, email, case_, data } from './database';
+import { constituent, email, case_ } from './database';
+import { v4 as uuid, UUIDTypes } from 'uuid';
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -22,12 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // get the form data
         const formData  = new FormData(form);
         const id_element : any = document.getElementById('case_id');
-        const case_id : number = parseInt(id_element.value);
+        var case_id : UUIDTypes = id_element.value ? id_element.value : ''
 
         // create email instance
-        const newEmail: email = {
+        const newEmail = {
             Case_id: case_id,
-            Datetime: new Date(),
             From: formData.get('from') as string | undefined,
             To: formData.get('to') as string,
             Cc: formData.get('cc') as string | undefined,
