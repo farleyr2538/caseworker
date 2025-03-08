@@ -1,1 +1,1 @@
-web: ./caseworker
+web: go run main.go
