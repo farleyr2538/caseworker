@@ -13,6 +13,12 @@ var db *pgx.Conn
 
 func main() {
 
+	// port
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	// connect to database
 	var err error
 	db, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
@@ -46,5 +52,5 @@ func main() {
 	http.HandleFunc("/api/add-email", addEmail) // add email to database
 
 	// log error in case of crash
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
