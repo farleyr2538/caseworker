@@ -1,5 +1,7 @@
+export {};
+/*
 export const data = {
-    emails: [
+    emails : [
         {
             Id: 1,
             Case_id: 1,
@@ -12,7 +14,7 @@ export const data = {
             Actioned: false
         }
     ],
-    constituents: [
+    constituents : [
         {
             id: 1,
             first_name: 'John',
@@ -38,7 +40,7 @@ export const data = {
             postcode: 'TE5 7PC'
         }
     ],
-    cases: [
+    cases : [
         {
             id: 1,
             constituent_id: 1,
@@ -46,4 +48,5 @@ export const data = {
             summary: 'This is a test case'
         }
     ]
-};
+}
+*/ 

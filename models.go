@@ -1,7 +1,13 @@
 package main
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type Constituent struct {
-	Id int
+	Id uuid.UUID
 	First_name string
 	Last_name string
 	Email string
@@ -14,16 +20,17 @@ type Constituent struct {
 }
 
 type Case struct {
-	Id int
-	Constituent_id int
+	Id uuid.UUID
+	Constituent_id uuid.UUID
 	Category string
 	Summary string
+	Status string
 }
 
 type Email struct {
-	Id int
-	Case_id int
-	Datetime string
+	Id uuid.UUID
+	Case_id uuid.UUID
+	Datetime time.Time
 	From string
 	To string
 	Cc string
@@ -38,10 +45,11 @@ type PageData struct {
 	Emails []Email
 }
 
+/*
 var emails []Email = []Email{
-    Email{
-        Id: 1,
-        Case_id: 1,
+    {
+        Id: uuid.NewRandom(),
+        Case_id: uuid.NewRandom(),
         Datetime: "2023-10-10T10:00:00Z",
         From: "john_doe@gmail.com",
         To: "jane_doe@yahoo.com",
@@ -92,3 +100,4 @@ var data = map[string]interface{} {
 	"constituents": constituents,
 	"cases": cases_,
 }
+*/

@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const newEmailRow = document.getElementById('newEmailRow');
     const newEmailButton = document.getElementById('newEmailButton');
     newEmailButton.addEventListener('click', function () {
-        // show message
-        const newEmailRow = document.getElementById('newEmailRow');
-        // newEmailRow.classList.remove('d-none');
         newEmailRow.classList.add('show');
+    });
+    const closeEmailButton = document.getElementById('closeEmailButton');
+    closeEmailButton.addEventListener('click', function () {
+        newEmailRow.classList.remove('show');
     });
     // when 'send' is pressed
     const form = document.getElementById('newEmailForm');
@@ -13,11 +15,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // get the form data
         const formData = new FormData(form);
         const id_element = document.getElementById('case_id');
-        const case_id = parseInt(id_element.value);
+        var case_id = id_element.value ? id_element.value : '';
         // create email instance
         const newEmail = {
             Case_id: case_id,
-            Datetime: new Date(),
             From: formData.get('from'),
             To: formData.get('to'),
             Cc: formData.get('cc'),

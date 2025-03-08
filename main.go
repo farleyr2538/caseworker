@@ -1,21 +1,24 @@
 package main
 
 import (
-	"database/sql"
+	"os"
+	"context"
 	"log"
 	"net/http"
-	_ "github.com/mattn/go-sqlite3"
+
+	"github.com/jackc/pgx/v4"
 )
 
-
-// connect to database
-var db, dbErr = sql.Open("sqlite3", "./data.db")
+var db *pgx.Conn
 
 func main() {
-	if dbErr != nil {
-		log.Fatal(dbErr)
+
+	// connect to database
+	var err error
+	db, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal("could not connect to database: ", err)
 	}
-	defer db.Close()
 
 	// serve dist files
 	df := http.FileServer(http.Dir("./dist"))
@@ -40,9 +43,7 @@ func main() {
 	http.HandleFunc("/case", viewCase)
 
 	// api endpoints
-
-	// add email to database
-	http.HandleFunc("/api/add-email", addEmail)
+	http.HandleFunc("/api/add-email", addEmail) // add email to database
 
 	// log error in case of crash
 	log.Fatal(http.ListenAndServe(":8080", nil))

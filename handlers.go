@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"html/template"
+	"math/rand"
 	"net/http"
 	"strconv"
-	"math/rand"
 
+	"github.com/google/uuid"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -43,7 +45,12 @@ func viewConstituent(w http.ResponseWriter, r *http.Request) {
 
 	// get constituent id from request
 	r.ParseForm()
-	var id string = r.Form.Get("id")
+	id, err := uuid.Parse(r.Form.Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	constituent, err := findConstituent(id)
 	// check if function ran correctly
 	if err != nil {
@@ -91,6 +98,7 @@ func submitConstituent(w http.ResponseWriter, r *http.Request) {
 		Last_name:  titleCaser.String(r.Form.Get("last_name")),
 		Address1:   titleCaser.String(r.Form.Get("address1")),
 		Address2:   titleCaser.String(r.Form.Get("address2")),
+		Area: 	 titleCaser.String(r.Form.Get("area")),
 		City:       titleCaser.String(r.Form.Get("city")),
 		Postcode:   cases.Upper(language.English).String(r.Form.Get("postcode")),
 		Email:      r.Form.Get("email"),
@@ -98,7 +106,7 @@ func submitConstituent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// add newConstituent to db
-	err := insertConstituent(newConstituent, db)
+	err := insertConstituent(newConstituent)
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Error(w, "failure: insertConstituent()", http.StatusInternalServerError)
@@ -115,13 +123,17 @@ func submitConstituent(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
+
 func viewConstituents(w http.ResponseWriter, r *http.Request) {
+
+	// get constituents from db
 	constituents, err := getConstituents()
 	if err != nil {
-		http.Error(w, "failed to run getConstituents successfully", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// parse template
 	t, err := template.ParseFiles("templates/layout.html", "templates/constituents.html")
 	if err != nil {
 		http.Error(w, "Could not parse constituents.html", http.StatusInternalServerError)
@@ -213,16 +225,19 @@ func createCase(w http.ResponseWriter, r *http.Request) {
 
 
 func submitCase(w http.ResponseWriter, r *http.Request) {
+	
 	r.ParseForm()
-	constituent_id, err := strconv.Atoi(r.Form.Get("constituent_id"))
+	constituent_id, err := uuid.Parse(r.Form.Get("id"))
 	if err != nil {
-		http.Error(w, "error converting constituent_id to int", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	thisCase := Case{
 		Constituent_id: constituent_id,
 		Summary: r.Form.Get("summary"),
 		Category: r.Form.Get("category"),
+		Status : "For Action",
 	}
 	err = insertCase(thisCase)
 	if err != nil {
@@ -243,14 +258,18 @@ func submitCase(w http.ResponseWriter, r *http.Request) {
 func viewCase(w http.ResponseWriter, r *http.Request) {
 	// get case id
 	r.ParseForm()
-	id := r.Form.Get("id")
-	var constituent_id int
+	case_id, err := uuid.Parse(r.Form.Get("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var constituent_id uuid.UUID
 	newCase := Case{}
 
 	// get case details
-	err := db.QueryRow(`
-		SELECT id, constituent_id, summary, category FROM cases WHERE id = ?
-	`, id).Scan(&newCase.Id, &newCase.Constituent_id, &newCase.Summary, &newCase.Category)
+	err = db.QueryRow(context.Background(),`
+		SELECT id, constituent_id, summary, category, status FROM case_ WHERE id = $1
+	`, case_id).Scan(&newCase.Id, &newCase.Constituent_id, &newCase.Summary, &newCase.Category, &newCase.Status)
 	if err != nil {
 		http.Error(w, "failed to get cases from db", http.StatusInternalServerError)
 		return
@@ -261,8 +280,8 @@ func viewCase(w http.ResponseWriter, r *http.Request) {
 
 	// get constituents details
 	c := Constituent{}
-	err = db.QueryRow(`
-		SELECT id, first_name, last_name, email, phone, address1, address2, city, postcode FROM constituents WHERE id = ?
+	err = db.QueryRow(context.Background(), `
+		SELECT id, first_name, last_name, email, phone, address1, address2, city, postcode FROM constituent WHERE id = $1
 	`, constituent_id).Scan(&c.Id, &c.First_name, &c.Last_name, &c.Email, &c.Phone, &c.Address1, &c.Address2, &c.City, &c.Postcode)
 	if err != nil {
 		http.Error(w, "failed to retreive constituent from db", http.StatusInternalServerError)

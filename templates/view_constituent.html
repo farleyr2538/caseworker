@@ -4,16 +4,21 @@
 
 <div class="container">
     <div class="row">
-        <div class="col">
+        <div class="col-8">
             {{ range .Constituents }}
             <h1>{{ .First_name }} {{ .Last_name }}</h1>
             <p>{{ .Address1 }}, {{ .City }}, {{ .Postcode }}</p>
             <p>Phone: {{ .Phone }} Email: {{ .Email }}</p>
             {{ end }}
-            <h3>Cases</h3>            
         </div>
     </div>
     <div class="row">
+        <div class="col-8 mt-3 mb-5">
+            <h3>Cases</h3>
+        </div>
+        <div class="col-4 align-self-center">
+            <button class="btn btn-primary" id="create_case">Create case</button>
+        </div>
         <div class="col">
             <p><b>Id</b></p>
         </div>
