@@ -1,1 +1,1 @@
-web: ./caseworker.git
+web: ./caseworker
