@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -103,61 +102,35 @@ func removeConstituent(id int) error {
 
 
 func getAllCases() ([]Case, error) {
-	rows, err := db.Query(context.Background(), "SELECT id, constituent_id, category, summary, status FROM case_;")
-	if err != nil {
-		fmt.Println("Failed to get cases from db")
-		return []Case{}, fmt.Errorf("failed to get cases from db")
-	}
 	cases := []Case{}
-	for rows.Next() {
-		eachCase := Case{}
-		err := rows.Scan(&eachCase.Id, &eachCase.Constituent_id, &eachCase.Category, &eachCase.Summary, &eachCase.Status)
-		if err != nil {
-			fmt.Println("failed to scan query data into case object")
-			return []Case{}, err
-		}
-		cases = append(cases, eachCase)
-	}
-	if err := rows.Err(); err != nil {
-		log.Fatal(err)
+	err := pgxscan.Select(context.Background(), db, &cases, "SELECT id, constituent_id, category, summary, status FROM case_;")
+	if err != nil {
+		return []Case{}, err
 	}
 	return cases, nil
 }
 
 
-func insertCase(c Case) error {
-	_, err := db.Exec(context.Background(),`
-		INSERT INTO case_ (constituent_id, category, summary, status) VALUES ($1, $2, $3, $4);
-	`, c.Constituent_id, c.Category, c.Summary, c.Status)
+func insertCase(c Case) (case_id uuid.UUID, err error) {
+	// return case id of inserted case
+	new_id := uuid.New()
+
+	_, err = db.Exec(context.Background(),`
+		INSERT INTO case_ (id, constituent_id, category, summary, status) VALUES ($1, $2, $3, $4, $5);
+	`, new_id, c.Constituent_id, c.Category, c.Summary, c.Status)
 	if err != nil {
 		fmt.Println("failed to insert case into cases table")
-		return fmt.Errorf("createCase() failed: %w", err)
+		return new_id, fmt.Errorf("createCase() failed: %w", err)
 	}
-	return nil
+	return new_id, nil
 }
 
 
-func getConstituentsCases(id uuid.UUID) ([]Case, error) {
-	
-	rows, err := db.Query(context.Background(), `
-		SELECT id, constituent_id, category, summary FROM case_ WHERE constituent_id = $1; 
-	`, id)
-	if err != nil {
-		return []Case{}, fmt.Errorf("getConstituentsCases(): failed to get data from db")
-	}
-	defer rows.Close()
+func getConstituentsCases(constituent_id uuid.UUID) ([]Case, error) {
 	cases := []Case{}
-	for rows.Next() {
-		currentCase := Case{}
-		err = rows.Scan(&currentCase.Id, &currentCase.Constituent_id, &currentCase.Category, &currentCase.Summary, &currentCase.Status)
-		if err != nil {
-			fmt.Println("getConstituentsCases(): error in scanning data into Case object")
-			return []Case{}, err
-		}
-		cases = append(cases, currentCase)
-	}
-	if err := rows.Err(); err != nil {
-		log.Fatal(err)
+	err := pgxscan.Select(context.Background(), db, &cases, "SELECT id, constituent_id, category, summary FROM case_ WHERE constituent_id = $1;", constituent_id)
+	if err != nil {
+		return []Case{}, err
 	}
 	return cases, nil
 }
@@ -171,3 +144,10 @@ func insertEmail(case_id uuid.UUID, datetime time.Time, from string, to string, 
 	}
 	return nil
 }
+
+
+/*
+func referenceGenerator() {
+	// generate case reference
+}
+*/

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -12,10 +11,6 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
-
-func randomInt(min, max int) int {
-	return rand.Intn(max - min) + min
-}
 
 // index
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +45,7 @@ func viewConstituent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	fmt.Printf("1. constituent_id: %s\n", id.String())
 
 	constituent, err := findConstituent(id)
 	// check if function ran correctly
@@ -58,13 +54,16 @@ func viewConstituent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "unable to find constituent with id.", http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("2. constituent found successfully using constituent_id")
 	constituents := []Constituent{constituent}
 
 	// get constituent's cases
 	cases, err := getConstituentsCases(id)
 	if err != nil {
+		fmt.Println("getConstituentsCases() failed")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	fmt.Println("3. cases retreived using constituent_id")
 
 	// put constituent and their cases together into a PageData object
 	data := PageData {
@@ -207,27 +206,34 @@ func viewCases(w http.ResponseWriter, r *http.Request) {
 
 
 func createCase(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("running createCase()...")
 	// get constituent id from request
 	r.ParseForm()
-	if r.Form.Get("id") == "" {
+	id_string := r.Form.Get("constituent_id")
+	fmt.Printf("1. constituent_id received by createCase(): %s", id_string)
+	/*
+	constituent_id, err := uuid.Parse(id_string)
+	if err != nil {
 		http.Error(w, "id is empty string", http.StatusInternalServerError)
 		return
 	}
-	id := r.Form.Get("id")
+	fmt.Printf("createCase: constituent_id: %s", constituent_id)
+	*/
 
 	t, err := template.ParseFiles("templates/layout.html", "templates/create_case.html")
 	if err != nil {
 		http.Error(w, "failed to generate create_case template", http.StatusInternalServerError)
 		return
 	}
-	t.Execute(w, id)
+	t.Execute(w, nil) // constituent_id
 }
 
 
 func submitCase(w http.ResponseWriter, r *http.Request) {
 	
 	r.ParseForm()
-	constituent_id, err := uuid.Parse(r.Form.Get("id"))
+	fmt.Println()
+	constituent_id, err := uuid.Parse(r.Form.Get("constituent_id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -239,7 +245,8 @@ func submitCase(w http.ResponseWriter, r *http.Request) {
 		Category: r.Form.Get("category"),
 		Status : "For Action",
 	}
-	err = insertCase(thisCase)
+
+	case_id, err := insertCase(thisCase)
 	if err != nil {
 		http.Error(w, "insertCase() failed", http.StatusInternalServerError)
 		return
@@ -251,14 +258,14 @@ func submitCase(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "failed to parse submit_case.html", http.StatusInternalServerError)
 		return
 	}
-	t.Execute(w, nil)
+	t.Execute(w, case_id)
 }
 
 
 func viewCase(w http.ResponseWriter, r *http.Request) {
 	// get case id
 	r.ParseForm()
-	case_id, err := uuid.Parse(r.Form.Get("id"))
+	case_id, err := uuid.Parse(r.Form.Get("case_id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

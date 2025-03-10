@@ -13,7 +13,7 @@ var db *pgx.Conn
 
 func main() {
 
-	// port
+	// get/set port
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

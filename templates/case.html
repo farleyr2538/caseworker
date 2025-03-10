@@ -8,7 +8,7 @@
         <div class="col">
             {{ range .Constituents }}
             <h1>{{ .First_name }} {{ .Last_name }}</h1>
-            <p>{{ .Address1 }}, {{ .Address2 }}, {{ .City }}</p>
+            <p>{{ .Address1 }}, {{ .Address2 }}, {{ .City }}, {{ .Postcode }}</p>
             {{ end }}
         </div>
     </div>
@@ -40,7 +40,7 @@
             </span>
         </div>
         <div class="col-12">
-            <form id="newEmailForm">
+            <form action="/api/add-email" id="newEmailForm">
                 {{ range .Cases}}
                 <input hidden id="case_id" name="case_id" value="{{ .Id }}">
                 {{ end }}

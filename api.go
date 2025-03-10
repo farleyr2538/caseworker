@@ -17,6 +17,7 @@ func addEmail(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	
 	datetime := time.Now().UTC()
 
 	// insert email details into db

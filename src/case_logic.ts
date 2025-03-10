@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         newEmailRow.classList.add('show');
     })
 
-    const closeEmailButton : any = document.getElementById('closeEmailButton');
+    const closeEmailButton : any = document.getElementById('closeNewEmail');
     closeEmailButton.addEventListener('click', function() {
         newEmailRow.classList.remove('show');
     })

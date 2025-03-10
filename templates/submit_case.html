@@ -6,7 +6,10 @@
     <div class="row">
         <div class="col">
             <h3>Case created</h3>
-            <button class="btn btn-primary">View case</button>
+            <form action="/case">
+                <input hidden value="{{ . }}">
+                <button class="btn btn-primary">View case</button>
+            </form>
         </div>
     </div>
 </div>
